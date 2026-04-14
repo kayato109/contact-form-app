@@ -13,8 +13,7 @@
                         </label>
                         <input id="name"
                             class="block mt-1 w-full border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-300 focus:border-amber-500 focus:ring-amber-500 rounded-md shadow-sm px-3 py-2"
-                            type="text" name="name" value="{{ old('name') }}" placeholder="山田 太郎" required
-                            autofocus />
+                            type="text" name="name" value="{{ old('name') }}" placeholder="山田 太郎" required autofocus />
                         @if ($errors->get('name'))
                             <ul class="text-sm text-red-600 space-y-1 mt-2">
                                 @foreach ((array) $errors->get('name') as $message)
@@ -57,6 +56,15 @@
                                 @endforeach
                             </ul>
                         @endif
+                    </div>
+                    <!-- Password Confirmation -->
+                    <div class="mt-4">
+                        <label for="password_confirmation" class="block font-medium text-sm text-amber-900">
+                            {{ __('パスワード確認') }}
+                        </label>
+                        <input id="password_confirmation"
+                            class="block mt-1 w-full border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-300 focus:border-amber-500 focus:ring-amber-500 rounded-md shadow-sm px-3 py-2"
+                            type="password" name="password_confirmation" placeholder="password" required />
                     </div>
 
                     <div class="flex items-center justify-center mt-6">
