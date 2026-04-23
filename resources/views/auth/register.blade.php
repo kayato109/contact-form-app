@@ -13,8 +13,7 @@
                         </label>
                         <input id="name"
                             class="block mt-1 w-full border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-300 focus:border-amber-500 focus:ring-amber-500 rounded-md shadow-sm px-3 py-2"
-                            type="text" name="name" value="{{ old('name') }}" placeholder="山田 太郎" required
-                            autofocus />
+                            type="text" name="name" value="{{ old('name') }}" placeholder="山田 太郎" required autofocus />
                         @if ($errors->get('name'))
                             <ul class="text-sm text-red-600 space-y-1 mt-2">
                                 @foreach ((array) $errors->get('name') as $message)
