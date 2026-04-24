@@ -28,6 +28,7 @@ Route::post('/register', [RegisterController::class, 'store'])->middleware('gues
 Route::middleware('auth')->group(function () {
     Route::get('/admin', [AdminController::class, 'index']);
     Route::get('/admin/contacts/{contact}', [AdminController::class, 'show']);
+    Route::delete('/admin/contacts/{contact}', [AdminController::class, 'destroy'])->name('contacts.destroy');
 
     Route::post('/admin/tags', [TagController::class, 'store']);
 
