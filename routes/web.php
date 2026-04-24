@@ -24,10 +24,13 @@ Route::post('/contacts', [ContactController::class, 'store']);
 Route::get('/thanks', [ContactController::class, 'thanks']);
 
 Route::post('/register', [RegisterController::class, 'store'])->middleware('guest');
+
 Route::middleware('auth')->group(function () {
     Route::get('/admin', [AdminController::class, 'index']);
     Route::get('/admin/contacts/{contact}', [AdminController::class, 'show']);
 
     Route::post('/admin/tags', [TagController::class, 'store']);
-    Route::get('/admin/tags/{tag}/edit', [TagController::class, 'edit']);
+
+    Route::get('/admin/tags/{tag}/edit', [TagController::class, 'edit'])->name('tags.edit');
+    Route::put('/admin/tags/{tag}', [TagController::class, 'update'])->name('tags.update');
 });
