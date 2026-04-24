@@ -31,4 +31,11 @@ class TagController extends Controller
 
         return redirect('/admin')->with('success', 'タグを更新しました');
     }
+
+    public function destroy(Tag $tag)
+    {
+        $tag->delete();
+
+        return redirect('/admin')->with('success', 'タグを削除しました');
+    }
 }
