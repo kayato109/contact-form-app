@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Actions\Fortify\CreateNewUser;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\TagController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,3 +24,10 @@ Route::post('/contacts', [ContactController::class, 'store']);
 Route::get('/thanks', [ContactController::class, 'thanks']);
 
 Route::post('/register', [RegisterController::class, 'store'])->middleware('guest');
+Route::middleware('auth')->group(function () {
+    Route::get('/admin', [AdminController::class, 'index']);
+    Route::get('/admin/contacts/{contact}', [AdminController::class, 'show']);
+
+    Route::post('/admin/tags', [TagController::class, 'store']);
+    Route::get('/admin/tags/{tag}/edit', [TagController::class, 'edit']);
+});
