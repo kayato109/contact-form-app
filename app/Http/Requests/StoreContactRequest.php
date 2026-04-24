@@ -22,8 +22,8 @@ class StoreContactRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'last_name' => ['required', 'string', 'max:255'],
             'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
             'gender' => ['required', 'integer', 'in:1,2,3'],
             'email' => ['required', 'string', 'email', 'max:255'],
             'tel' => ['required', 'string', 'regex:/^[0-9]{10,11}$/'],
@@ -39,8 +39,8 @@ class StoreContactRequest extends FormRequest
     public function messages()
     {
         return [
-            'last_name.required' => '姓を入力してください',
-            'first_name.required' => '名を入力してください',
+            'first_name.required' => '姓を入力してください',
+            'last_name.required' => '名を入力してください',
             'gender.required' => '性別を選択してください',
 
             'email.required' => 'メールアドレスを入力してください',
