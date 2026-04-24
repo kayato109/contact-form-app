@@ -23,8 +23,8 @@ class ContactFactory extends Factory
         $gender = $faker->randomElement([1, 2, 3]);
 
         return [
-            'last_name' => $faker->lastName(),
-            'first_name' => match ($gender) {
+            'first_name' => $faker->lastName(),
+            'last_name' => match ($gender) {
                 1 => $faker->firstNameMale(),
                 2 => $faker->firstNameFemale(),
                 default => $faker->firstName(),// その他はどちらでもOK
