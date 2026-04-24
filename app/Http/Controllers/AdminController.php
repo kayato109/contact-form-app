@@ -55,4 +55,10 @@ class AdminController extends Controller
         $contact->load(['category', 'tags']);
         return view('admin.show', compact('contact'));
     }
+    public function destroy(Contact $contact)
+    {
+        $contact->delete(); // contact_tag は外部キーで自動削除
+
+        return redirect('/admin')->with('success', 'お問い合わせを削除しました');
+    }
 }
