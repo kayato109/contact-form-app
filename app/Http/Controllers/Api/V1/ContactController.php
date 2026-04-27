@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\Api\V1\IndexContactRequest;
 use App\Http\Requests\Api\V1\StoreContactRequest;
+use App\Http\Requests\Api\V1\UpdateContactRequest;
 use App\Http\Resources\ContactResource;
 use App\Models\Contact;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -70,6 +71,30 @@ class ContactController extends Controller
         return (new ContactResource($contact))
             ->response()
             ->setStatusCode(201);
+    }
+
+    public function update(UpdateContactRequest $request, string $id)
+    {
+        $contact = Contact::find($id);
+
+        if (!$contact) {
+            return response()->json([
+                'error' => 'お問い合わせが見つかりませんでした。'
+            ], 404);
+        }
+
+        $validated = $request->validated();
+
+        $tagIds = $validated['tag_ids'] ?? [];
+
+        $contact->update($validated);
+
+        // タグ同期（attach ではなく sync）
+        $contact->tags()->sync($tagIds);
+
+        $contact->load(['category', 'tags']);
+
+        return new ContactResource($contact);
     }
 
 }
