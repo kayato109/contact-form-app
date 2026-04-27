@@ -15,7 +15,7 @@ class ContactController extends Controller
     {
         $validated = $request->validated();
 
-        $query = Contact::with(['category', 'tags']);
+        $query = Contact::query();
 
         if (!empty($validated['keyword'])) {
             $keyword = $validated['keyword'];
@@ -43,5 +43,12 @@ class ContactController extends Controller
         $contacts = $query->latest()->paginate($perPage);
 
         return ContactResource::collection($contacts);
+    }
+
+    public function show(Contact $contact): ContactResource
+    {
+        $contact->load(['category', 'tags']);
+
+        return new ContactResource($contact);
     }
 }
