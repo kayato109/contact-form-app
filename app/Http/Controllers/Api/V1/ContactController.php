@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\Api\V1\IndexContactRequest;
+use App\Http\Requests\Api\V1\StoreContactRequest;
 use App\Http\Resources\ContactResource;
 use App\Models\Contact;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -51,4 +52,24 @@ class ContactController extends Controller
 
         return new ContactResource($contact);
     }
+
+    public function store(StoreContactRequest $request)
+    {
+        $validated = $request->validated();
+
+        $tagIds = $validated['tag_ids'] ?? [];
+
+        $contact = Contact::create($validated);
+
+        if (!empty($tagIds)) {
+            $contact->tags()->attach($tagIds);
+        }
+
+        $contact->load(['category', 'tags']);
+
+        return (new ContactResource($contact))
+            ->response()
+            ->setStatusCode(201);
+    }
+
 }
