@@ -23,17 +23,28 @@ class ContactResource extends JsonResource
             'tel' => $this->tel,
             'address' => $this->address,
             'building' => $this->building,
-            'category' => [
-                'id' => $this->category->id,
-                'content' => $this->category->content,
-            ],
-            'tags' => $this->tags->map(function ($tag) {
+            'detail' => $this->detail,
+
+            // 一覧では null、詳細では category が返る
+            'category' => $this->whenLoaded('category', function () {
                 return [
-                    'id' => $tag->id,
-                    'name' => $tag->name,
+                    'id' => $this->category->id,
+                    'content' => $this->category->content,
                 ];
             }),
+
+            // 一覧では空配列、詳細では tags が返る
+            'tags' => $this->whenLoaded('tags', function () {
+                return $this->tags->map(function ($tag) {
+                    return [
+                        'id' => $tag->id,
+                        'name' => $tag->name,
+                    ];
+                });
+            }),
+
             'created_at' => $this->created_at->toIso8601String(),
+            'updated_at' => $this->updated_at->toIso8601String(),
         ];
     }
 }
