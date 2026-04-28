@@ -27,10 +27,11 @@ class UpdateTagRequest extends FormRequest
                 'required',
                 'string',
                 'max:50',
-                Rule::unique('tags')->ignore($this->tag),
+                Rule::unique('tags')->ignore($this->tag->id ?? null),
             ],
         ];
     }
+
 
     public function messages(): array
     {

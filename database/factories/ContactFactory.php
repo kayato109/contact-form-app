@@ -38,7 +38,7 @@ class ContactFactory extends Factory
             'address' => $faker->prefecture() . $faker->city() . ' ' . $faker->streetAddress(),
             'building' => $faker->optional()->secondaryAddress(),
             'detail' => $faker->realText(120),
-            'category_id' => null, // Seeder 側で割り当てる
+            'category_id' => Category::factory(),
         ];
 
     }
