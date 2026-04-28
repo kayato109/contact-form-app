@@ -97,4 +97,16 @@ class ContactController extends Controller
         return new ContactResource($contact);
     }
 
+    public function destroy(Contact $contact)
+    {
+        if (!$contact) {
+            return response()->json([
+                'error' => 'お問い合わせが見つかりませんでした。'
+            ], 404);
+        }
+
+        $contact->delete();
+
+        return response()->json(null, 204);
+    }
 }
