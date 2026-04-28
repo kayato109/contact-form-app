@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Tag;
 use App\Http\Requests\StoreTagRequest;
 use App\Http\Requests\UpdateTagRequest;
 
 class TagController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function store(StoreTagRequest $request)
     {
-        Tag::create([
-            'name' => $request->name,
-        ]);
-
-        return redirect('/admin');
+        Tag::create($request->validated());
+        return redirect('/admin')->with('success', 'タグを作成しました');
     }
 
     public function edit(Tag $tag)
@@ -25,17 +26,13 @@ class TagController extends Controller
 
     public function update(UpdateTagRequest $request, Tag $tag)
     {
-        $tag->update([
-            'name' => $request->name,
-        ]);
-
+        $tag->update($request->validated());
         return redirect('/admin')->with('success', 'タグを更新しました');
     }
 
     public function destroy(Tag $tag)
     {
         $tag->delete();
-
         return redirect('/admin')->with('success', 'タグを削除しました');
     }
 }
