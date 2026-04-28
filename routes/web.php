@@ -36,3 +36,6 @@ Route::middleware('auth')->group(function () {
     Route::put('/admin/tags/{tag}', [TagController::class, 'update'])->name('tags.update');
     Route::delete('/admin/tags/{tag}', [TagController::class, 'destroy'])->name('tags.destroy');
 });
+
+//CSVエクスポート用認証不要
+Route::get('/contacts/export', [ContactController::class, 'export']);
