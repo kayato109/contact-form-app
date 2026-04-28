@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Http\Requests\Api\V1\IndexContactRequest;
 use App\Http\Requests\Api\V1\StoreContactRequest;
 use App\Http\Requests\Api\V1\UpdateContactRequest;
@@ -16,97 +15,52 @@ class ContactController extends Controller
     public function index(IndexContactRequest $request): AnonymousResourceCollection
     {
         $validated = $request->validated();
-
-        $query = Contact::query();
-
-        if (!empty($validated['keyword'])) {
-            $keyword = $validated['keyword'];
-            $query->where(function ($q) use ($keyword) {
-                $q->where('first_name', 'like', "%{$keyword}%")
-                    ->orWhere('last_name', 'like', "%{$keyword}%")
-                    ->orWhere('email', 'like', "%{$keyword}%");
-            });
-        }
-
-        if (!empty($validated['gender'])) {
-            $query->where('gender', $validated['gender']);
-        }
-
-        if (!empty($validated['category_id'])) {
-            $query->where('category_id', $validated['category_id']);
-        }
-
-        if (!empty($validated['date'])) {
-            $query->whereDate('created_at', $validated['date']);
-        }
-
         $perPage = $validated['per_page'] ?? 20;
 
-        $contacts = $query->latest()->paginate($perPage);
+        $contacts = Contact::with(['category', 'tags'])
+            ->filter($validated)
+            ->latest()
+            ->paginate($perPage);
 
         return ContactResource::collection($contacts);
     }
 
     public function show(Contact $contact): ContactResource
     {
-        $contact->load(['category', 'tags']);
-
-        return new ContactResource($contact);
+        return new ContactResource(
+            $contact->load(['category', 'tags'])
+        );
     }
 
     public function store(StoreContactRequest $request)
     {
         $validated = $request->validated();
-
         $tagIds = $validated['tag_ids'] ?? [];
 
         $contact = Contact::create($validated);
+        $contact->tags()->sync($tagIds);
 
-        if (!empty($tagIds)) {
-            $contact->tags()->attach($tagIds);
-        }
-
-        $contact->load(['category', 'tags']);
-
-        return (new ContactResource($contact))
-            ->response()
-            ->setStatusCode(201);
+        return (new ContactResource(
+            $contact->load(['category', 'tags'])
+        ))->response()->setStatusCode(201);
     }
 
-    public function update(UpdateContactRequest $request, string $id)
+    public function update(UpdateContactRequest $request, Contact $contact)
     {
-        $contact = Contact::find($id);
-
-        if (!$contact) {
-            return response()->json([
-                'error' => 'お問い合わせが見つかりませんでした。'
-            ], 404);
-        }
-
         $validated = $request->validated();
-
         $tagIds = $validated['tag_ids'] ?? [];
 
         $contact->update($validated);
-
-        // タグ同期（attach ではなく sync）
         $contact->tags()->sync($tagIds);
 
-        $contact->load(['category', 'tags']);
-
-        return new ContactResource($contact);
+        return new ContactResource(
+            $contact->load(['category', 'tags'])
+        );
     }
 
     public function destroy(Contact $contact)
     {
-        if (!$contact) {
-            return response()->json([
-                'error' => 'お問い合わせが見つかりませんでした。'
-            ], 404);
-        }
-
         $contact->delete();
-
         return response()->json(null, 204);
     }
 }
