@@ -1,66 +1,241 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# COACHTECH お問い合わせフォーム
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+本プロジェクトは、COACHTECH カリキュラムに基づき作成した  
+お問い合わせ管理システムです。  
+問い合わせの登録・編集・削除・検索・タグ付け・CSV 出力・API 提供など、  
+ CRUD + API 構成を備えています。
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+# 概要
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+本アプリケーションは、ユーザーからのお問い合わせ内容を管理するための  
+問い合わせ管理システムです。
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+実装機能一覧
 
-## Learning Laravel
+- お問い合わせの新規登録 / 編集 / 削除
+- カテゴリ・タグによる分類
+- タグの複数選択（多対多）
+- 問い合わせ一覧の検索（キーワード・カテゴリ・日付）
+- CSV エクスポート
+- API（一覧 / 詳細 / 更新 / 削除）
+- バリデーション（FormRequest）
+- Seeder / Factory によるテストデータ生成
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+# ER 図（Mermaid）
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```mermaid
+erDiagram
+    CATEGORY ||--o{ CONTACT : "1対多"
+    TAG ||--o{ CONTACT_TAG : "多対多"
+    CONTACT ||--o{ CONTACT_TAG : "多対多"
 
-## Laravel Sponsors
+    USER {
+        bigint id PK
+        string name
+        string email
+        timestamp email_verified_at
+        string password
+        string remember_token
+        datetime created_at
+        datetime updated_at
+    }
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+    CATEGORY {
+        bigint id PK
+        string content
+        datetime created_at
+        datetime updated_at
+    }
 
-### Premium Partners
+    CONTACT {
+        bigint id PK
+        string first_name
+        string last_name
+        int gender
+        string email
+        string tel
+        string address
+        string building
+        string detail
+        bigint category_id FK
+        datetime created_at
+        datetime updated_at
+    }
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+    TAG {
+        bigint id PK
+        string name
+        datetime created_at
+        datetime updated_at
+    }
 
-## Contributing
+    CONTACT_TAG {
+        bigint id PK
+        bigint contact_id FK
+        bigint tag_id FK
+        datetime created_at
+        datetime updated_at
+    }
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# 環境構築手順（Docker / Laravel Sail）
 
-## Code of Conduct
+以下の手順で、クローン後すぐに開発環境を構築できます。
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## 1. リポジトリのクローン
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+git clone https://github.com/kayato109/contact-form-app  
+cd contact-form-app
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 2. .env ファイルの作成
+
+cp .env.example .env
+
+.env 内の DB 設定が以下になっていることを確認してください。
+
+DB_CONNECTION=mysql  
+DB_HOST=mysql  
+DB_PORT=3306  
+DB_DATABASE=laravel  
+DB_USERNAME=sail  
+DB_PASSWORD=password
+
+※ DB_HOST は localhost ではなく mysql（コンテナ名）を指定します。
+
+---
+
+## 3. Composer パッケージのインストール
+
+docker run --rm \
+ -u "$(id -u):$(id -g)" \
+ -v "$(pwd):/var/www/html" \
+ -w /var/www/html \
+ laravelsail/php82-composer:latest \
+ composer install
+
+---
+
+## 4. Sail の起動
+
+./vendor/bin/sail up -d
+
+---
+
+## 5. Node パッケージのインストール
+
+sail npm install
+
+---
+
+## 6. Vite 開発サーバーの起動
+
+sail npm run dev
+
+※ sail npm run dev は実行したままにしておきます。
+
+---
+
+## 7. アプリケーションキーの生成
+
+sail artisan key:generate
+
+---
+
+## 8. データベースのマイグレーション & 初期データ投入
+
+sail artisan migrate --seed
+
+※ データベースをリセットしたい場合  
+sail artisan migrate:fresh --seed
+
+---
+
+## 9. 開発環境 URL
+
+http://localhost
+
+---
+
+# 使用技術
+
+PHP 8.2  
+Laravel 10.x  
+MySQL 8.4  
+Docker（Laravel Sail）  
+Nginx  
+Blade / Vite  
+Faker / Laravel Pint / PHPUnit
+
+---
+
+# API エンドポイント一覧
+
+GET /api/v1/contacts … 問い合わせ一覧  
+GET /api/v1/contacts/{id} … 問い合わせ詳細  
+PUT /api/v1/contacts/{id} … 問い合わせ更新  
+DELETE /api/v1/contacts/{id} … 問い合わせ削除
+
+---
+
+# 開発環境 URL
+
+http://localhost
+
+---
+
+# 申し送り事項
+
+1. first_name / last_name の扱いについて
+
+- Blade 側の仕様に合わせ、first_name を「姓」、last_name を「名」として扱っています。
+- これに合わせるため、ContactFactory では以下のように Faker の生成内容を調整しています。
+
+```
+  'first_name' => $faker->lastName(),
+  'last_name' => match ($gender) {
+      1 => $faker->firstNameMale(),
+      2 => $faker->firstNameFemale(),
+      default => $faker->firstName(),
+  },
+```
+
+- テストコードも同様に first_name＝姓、last_name＝名 として統一しています。
+- ※一般的なフォームとは入力順が逆になるため、ブラウザの予測入力が姓・名で逆になる可能性があります。
+
+---
+
+2. category_id の扱いについて
+
+- contacts.category_id は NOT NULL 制約があるため、Factory では既存 Category からランダムに割り当てる方式にしています。
+- これは Seeder 実行時に整合性を保つための対応です（テスト無しの環境では category_id を NULL にする実装も可能）。
+
+---
+
+3. 電話番号バリデーションの追加
+
+- 要件には明記されていませんでしたが、ユーザー入力で起こり得るエラーを考慮し、StoreContactRequest に以下のエラーメッセージを追加しています。
+
+```
+  'tel.regex' => '電話番号は10桁または11桁の数字で入力してください',
+```
+
+---
+
+4. Controller の責務について
+
+- 本プロジェクトでは教材に Service 層の説明がなかったため、ロジックは Controller に集約しています。
+- 特に CSV エクスポート処理などは本来 Service 層に切り出すべき箇所ですが、教材仕様に合わせて Controller 内で実装しています。
+
+---
+
+# 作成者
+
+上木屋　陽斗
