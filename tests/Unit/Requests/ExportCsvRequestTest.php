@@ -14,7 +14,8 @@ class ExportCsvRequestTest extends TestCase
 
     private function validate(array $data)
     {
-        $request = new ExportContactRequest();
+        $request = new ExportContactRequest;
+
         return Validator::make($data, $request->rules());
     }
 
@@ -45,7 +46,7 @@ class ExportCsvRequestTest extends TestCase
     }
 
     /** @test */
-    public function 存在しないカテゴリIDはエラーになる()
+    public function 存在しないカテゴリ_i_dはエラーになる()
     {
         $validator = $this->validate(['category_id' => 999]);
 

@@ -3,6 +3,7 @@
 namespace Tests\Unit\Requests;
 
 use App\Http\Requests\IndexContactRequest;
+use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Validator;
 use Tests\TestCase;
@@ -10,9 +11,11 @@ use Tests\TestCase;
 class IndexContactRequestTest extends TestCase
 {
     use RefreshDatabase;
+
     private function validate(array $data)
     {
-        $request = new IndexContactRequest();
+        $request = new IndexContactRequest;
+
         return Validator::make($data, $request->rules());
     }
 
@@ -20,7 +23,7 @@ class IndexContactRequestTest extends TestCase
     public function 有効な検索条件はバリデーションを通過する()
     {
         // Arrange
-        $category = \App\Models\Category::factory()->create();
+        $category = Category::factory()->create();
 
         $data = [
             'keyword' => '山田',

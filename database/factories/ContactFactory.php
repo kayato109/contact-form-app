@@ -2,19 +2,15 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Category;
+use App\Models\Contact;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Contact>
+ * @extends Factory<Contact>
  */
 class ContactFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         $faker = \Faker\Factory::create('ja_JP');
@@ -27,7 +23,7 @@ class ContactFactory extends Factory
             'last_name' => match ($gender) {
                 1 => $faker->firstNameMale(),
                 2 => $faker->firstNameFemale(),
-                default => $faker->firstName(),// その他はどちらでもOK
+                default => $faker->firstName(),
             },
             'gender' => $gender,
             'email' => $faker->unique()->safeEmail(),
@@ -35,11 +31,13 @@ class ContactFactory extends Factory
                 $faker->regexify('0[1-9]\d{8}'),   // 10桁（固定電話）
                 $faker->regexify('0[789]0\d{8}'),  // 11桁（携帯）
             ]),
-            'address' => $faker->prefecture() . $faker->city() . ' ' . $faker->streetAddress(),
+            'address' => $faker->prefecture().$faker->city().' '.$faker->streetAddress(),
             'building' => $faker->optional()->secondaryAddress(),
             'detail' => $faker->realText(120),
-            'category_id' => Category::factory(),
-        ];
 
+            // 既存 categories からランダムに選ぶ
+            // ※ NULL だとテストで NOT NULL 制約エラーになるため
+            'category_id' => Category::inRandomOrder()->value('id'),
+        ];
     }
 }

@@ -3,12 +3,20 @@
 namespace Tests\Feature\Api;
 
 use App\Models\Contact;
+use Database\Seeders\CategorySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ContactShowApiTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed(CategorySeeder::class);
+    }
 
     /** @test */
     public function 詳細が取得できる()
@@ -22,7 +30,7 @@ class ContactShowApiTest extends TestCase
     }
 
     /** @test */
-    public function 存在しないIDは404が返る()
+    public function 存在しない_i_dは404が返る()
     {
         $response = $this->getJson('/api/v1/contacts/999');
 

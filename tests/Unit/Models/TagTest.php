@@ -4,12 +4,20 @@ namespace Tests\Unit\Models;
 
 use App\Models\Contact;
 use App\Models\Tag;
+use Database\Seeders\CategorySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class TagTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed(CategorySeeder::class);
+    }
 
     /** @test */
     public function タグは複数のお問い合わせに紐づく()

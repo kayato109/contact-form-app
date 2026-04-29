@@ -5,12 +5,20 @@ namespace Tests\Feature;
 use App\Models\Category;
 use App\Models\Contact;
 use App\Models\User;
+use Database\Seeders\CategorySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class AdminContactDetailTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed(CategorySeeder::class);
+    }
 
     /** @test */
     public function 管理画面でお問い合わせ詳細が表示される()

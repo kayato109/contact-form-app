@@ -36,6 +36,7 @@ class ContactController extends Controller
     {
         $validated = $request->validated();
         $tagIds = $validated['tag_ids'] ?? [];
+        unset($validated['tag_ids']);
 
         $contact = Contact::create($validated);
         $contact->tags()->sync($tagIds);
@@ -49,18 +50,20 @@ class ContactController extends Controller
     {
         $validated = $request->validated();
         $tagIds = $validated['tag_ids'] ?? [];
+        unset($validated['tag_ids']);
 
         $contact->update($validated);
         $contact->tags()->sync($tagIds);
 
-        return new ContactResource(
+        return (new ContactResource(
             $contact->load(['category', 'tags'])
-        );
+        ))->response()->setStatusCode(200);
     }
 
     public function destroy(Contact $contact)
     {
         $contact->delete();
+
         return response()->json(null, 204);
     }
 }

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreContactRequest;
 use App\Http\Requests\ExportContactRequest;
+use App\Http\Requests\StoreContactRequest;
 use App\Models\Category;
-use App\Models\Tag;
 use App\Models\Contact;
+use App\Models\Tag;
 
 class ContactController extends Controller
 {
@@ -24,7 +24,7 @@ class ContactController extends Controller
 
         return view('contact.confirm', [
             'validated' => $validated,
-            'category' => Category::find($validated['category_id']),
+            'category' => Category::findOrFail($validated['category_id']),
             'tags' => Tag::whereIn('id', $validated['tag_ids'] ?? [])->get(),
         ]);
     }
@@ -46,14 +46,12 @@ class ContactController extends Controller
 
     public function export(ExportContactRequest $request)
     {
-        $validated = $request->validated();
-
         $contacts = Contact::with('category')
-            ->filter($validated)
+            ->filter($request->validated())
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // CSV を文字列として作る（テスト環境用）
+        // CSV を文字列として作成（テスト環境用）
         $csv = fopen('php://temp', 'r+');
         fwrite($csv, "\xEF\xBB\xBF"); // BOM
 
@@ -67,18 +65,18 @@ class ContactController extends Controller
             '建物',
             'カテゴリ',
             '内容',
-            '作成日時'
+            '作成日時',
         ]);
 
         foreach ($contacts as $contact) {
-            fputcsv($csv, $this->makeCsvRow($contact));
+            fputcsv($csv, $contact->toCsvRow());
         }
 
         rewind($csv);
         $csvContent = stream_get_contents($csv);
         fclose($csv);
 
-        // テスト環境なら普通のレスポンスを返す
+        // テスト環境は通常レスポンス
         if (app()->environment('testing')) {
             return response($csvContent, 200, [
                 'Content-Type' => 'text/csv; charset=UTF-8',
@@ -92,22 +90,4 @@ class ContactController extends Controller
             'Content-Type' => 'text/csv; charset=UTF-8',
         ]);
     }
-
-
-    protected function makeCsvRow(Contact $contact)
-    {
-        return [
-            $contact->id,
-            $contact->full_name,
-            $contact->gender_label,
-            $contact->email,
-            $contact->tel,
-            $contact->address,
-            $contact->building,
-            $contact->category_name,
-            $contact->detail,
-            $contact->created_at->format('Y-m-d H:i:s'),
-        ];
-    }
-
 }
