@@ -114,12 +114,24 @@ DB_PASSWORD=password
 
 ## 3. Composer パッケージのインストール
 
+```
 docker run --rm \
  -u "$(id -u):$(id -g)" \
  -v "$(pwd):/var/www/html" \
  -w /var/www/html \
  laravelsail/php82-composer:latest \
  composer install
+```
+
+※ 注意  
+以下の docker run コマンドは改行を含むため、行末の `\` も含めて正しくコピーしてください。  
+もしうまく動かない場合は、1 行版を使用してください。
+
+【1 行版】
+
+```
+docker run --rm -u "$(id -u):$(id -g)" -v "$(pwd):/var/www/html" -w /var/www/html laravelsail/php82-composer:latest composer install
+```
 
 ---
 
