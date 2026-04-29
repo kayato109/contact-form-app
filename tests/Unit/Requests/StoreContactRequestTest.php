@@ -12,9 +12,11 @@ use Tests\TestCase;
 class StoreContactRequestTest extends TestCase
 {
     use RefreshDatabase;
+
     private function validate(array $data)
     {
-        $request = new StoreContactRequest();
+        $request = new StoreContactRequest;
+
         return Validator::make($data, $request->rules());
     }
 

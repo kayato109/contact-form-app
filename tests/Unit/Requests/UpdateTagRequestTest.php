@@ -14,13 +14,13 @@ class UpdateTagRequestTest extends TestCase
 
     private function validate(array $data, Tag $tag)
     {
-        $request = new UpdateTagRequest();
+        $request = new UpdateTagRequest;
 
         // Route パラメータをセット
         $request->setRouteResolver(function () use ($tag) {
-            return new class ($tag) {
-                public function __construct(public $tag)
-                {}
+            return new class($tag)
+            {
+                public function __construct(public $tag) {}
 
                 public function parameter($key)
                 {

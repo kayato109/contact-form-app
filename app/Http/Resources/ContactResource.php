@@ -2,17 +2,11 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ContactResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return [
             'id' => $this->id,
@@ -25,26 +19,24 @@ class ContactResource extends JsonResource
             'building' => $this->building,
             'detail' => $this->detail,
 
-            // 一覧では null、詳細では category が返る
             'category' => $this->whenLoaded('category', function () {
                 return [
-                    'id' => $this->category->id,
-                    'content' => $this->category->content,
+                    'id' => $this->category?->id,
+                    'content' => $this->category?->content,
                 ];
             }),
 
-            // 一覧では空配列、詳細では tags が返る
             'tags' => $this->whenLoaded('tags', function () {
                 return $this->tags->map(function ($tag) {
                     return [
-                        'id' => $tag->id,
-                        'name' => $tag->name,
+                        'id' => $tag?->id,
+                        'name' => $tag?->name,
                     ];
                 });
             }),
 
-            'created_at' => $this->created_at->toIso8601String(),
-            'updated_at' => $this->updated_at->toIso8601String(),
+            'created_at' => $this->created_at?->toIso8601String(),
+            'updated_at' => $this->updated_at?->toIso8601String(),
         ];
     }
 }

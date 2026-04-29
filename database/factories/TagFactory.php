@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\Tag;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Tag>
+ * @extends Factory<Tag>
  */
 class TagFactory extends Factory
 {
@@ -14,11 +15,10 @@ class TagFactory extends Factory
      *
      * @return array<string, mixed>
      */
-
     public function definition(): array
     {
         return [
-            'name' => fake()->unique()->word(),
+            'name' => fake('ja_JP')->unique()->word(),
         ];
     }
 }

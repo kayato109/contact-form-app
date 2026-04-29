@@ -13,7 +13,7 @@ class ExportCsvTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function 未ログインユーザーはCSVをダウンロードできない()
+    public function 未ログインユーザーは_cs_vをダウンロードできない()
     {
         $response = $this->get('/contacts/export');
 
@@ -21,7 +21,7 @@ class ExportCsvTest extends TestCase
     }
 
     /** @test */
-    public function ログインユーザーはCSVをダウンロードできる()
+    public function ログインユーザーは_cs_vをダウンロードできる()
     {
         $user = User::factory()->create();
         $category = Category::factory()->create();

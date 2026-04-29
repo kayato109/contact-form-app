@@ -6,19 +6,11 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreContactRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
@@ -36,18 +28,21 @@ class StoreContactRequest extends FormRequest
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
             'first_name.required' => '姓を入力してください',
             'last_name.required' => '名を入力してください',
+
             'gender.required' => '性別を選択してください',
+            'gender.in' => '性別の値が不正です',
 
             'email.required' => 'メールアドレスを入力してください',
             'email.email' => 'メールアドレスはメール形式で入力してください',
 
             'tel.required' => '電話番号を入力してください',
-            //要件に無いが必要かと思い追加
+
+            // 要件に無いが必要と思い追加
             'tel.regex' => '電話番号は10桁または11桁の数字で入力してください',
 
             'address.required' => '住所を入力してください',
@@ -58,5 +53,4 @@ class StoreContactRequest extends FormRequest
             'detail.max' => 'お問い合わせの内容は120文字以内で入力してください',
         ];
     }
-
 }

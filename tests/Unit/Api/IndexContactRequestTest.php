@@ -14,7 +14,8 @@ class IndexContactRequestTest extends TestCase
 
     private function validate(array $data)
     {
-        $request = new IndexContactRequest();
+        $request = new IndexContactRequest;
+
         return Validator::make($data, $request->rules());
     }
 

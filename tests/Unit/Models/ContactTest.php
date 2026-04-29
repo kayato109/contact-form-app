@@ -5,12 +5,20 @@ namespace Tests\Unit\Models;
 use App\Models\Category;
 use App\Models\Contact;
 use App\Models\Tag;
+use Database\Seeders\CategorySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ContactTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed(CategorySeeder::class);
+    }
 
     /** @test */
     public function お問い合わせはカテゴリに属する()

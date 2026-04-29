@@ -2,14 +2,21 @@
 
 namespace Tests\Feature\Api;
 
-use App\Models\Category;
 use App\Models\Contact;
+use Database\Seeders\CategorySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ContactIndexApiTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed(CategorySeeder::class);
+    }
 
     /** @test */
     public function 一覧が取得できる()
